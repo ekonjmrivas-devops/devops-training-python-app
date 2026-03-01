@@ -64,8 +64,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build image
-        run: docker build -t "$IMAGE_NAME" -f devops/Dockerfile .
-
+        run: docker build -t "$IMAGE_NAME" -f Dockerfile .
   cd:
     name: CD
     runs-on: [self-hosted, linux, docker]
@@ -85,7 +84,7 @@ jobs:
           echo "Branch: ${{ github.ref_name }}"
           echo "RUN_CD: ${{ inputs.RUN_CD }}"
       - name: Build image
-        run: docker build -t "$IMAGE_NAME" -f devops/Dockerfile .
+        run: docker build -t "$IMAGE_NAME" -f Dockerfile .
       - name: Deploy
         run: |
           docker compose up -d app
