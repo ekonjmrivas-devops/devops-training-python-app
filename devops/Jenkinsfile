@@ -1,19 +1,22 @@
-pipeline {
+/*
+#E1 - Estructura básica
 
-    agent { dockerfile true }
-    stages {
-       stage('Test') {
-            
-            steps {
-                sh 'pytest -q'
-            }
-        }
-         stage('Lint') {
-           
-            steps {
-                sh 'pip install -r requirements.txt flake8 mypy'
-                sh 'make lint'
-            }
-        }
+*/
+pipeline {
+  agent any
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+  }
+
+  stages {
+    stage('Info') {
+      steps {
+        echo "Job: ${env.JOB_NAME}"
+        echo "Build: ${env.BUILD_NUMBER}"
+        echo "Branch: ${env.BRANCH_NAME}"
+      }
     }
+  }
 }
