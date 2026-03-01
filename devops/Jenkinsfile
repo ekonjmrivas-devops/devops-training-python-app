@@ -73,8 +73,8 @@ pipeline {
           try {
             sh "IMAGE_NAME=${env.IMAGE_NAME} docker compose -p ${env.COMPOSE_PROJECT} up -d"
             sh 'sleep 10'
-            sh "docker ps -a"
-            sh "docker logs my-flask-app-dc"
+            //sh "docker ps -a"
+            //sh "docker logs my-flask-app-dc"
             sh """
               docker run --rm \
                 --network ${env.COMPOSE_PROJECT}_scalian_training \
