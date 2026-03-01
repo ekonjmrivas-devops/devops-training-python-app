@@ -3,8 +3,9 @@
 #E2 - Add stage CI Test
 #E4 - Add function runInDocker
 #E5 - Add CI Build image
-
+#E6 - Add CD Completo
 */
+
 
 def runInDocker(String image, Closure body) {
   docker.image(image).inside {
@@ -20,8 +21,13 @@ pipeline {
     disableConcurrentBuilds()
   }
 
+  parameters {
+    booleanParam(name: 'RUN_CD', defaultValue: false, description: 'Ejecutar CD (solo develop/master)')
+  }
+
   environment {
     IMAGE_NAME = "contrerasadr/devops-training-python-app:${env.BUILD_NUMBER}"
+    APP_URL    = 'http://localhost:5001/'
   }
 
   stages {
@@ -48,6 +54,43 @@ pipeline {
       steps {
         script {
           docker.build(env.IMAGE_NAME, '-f Dockerfile .')
+        }
+      }
+    }
+
+    stage('CD') {
+      when {
+        anyOf {
+          expression { return params.RUN_CD }
+          branch 'develop'
+          branch 'master'
+        }
+      }
+      steps {
+        script {
+          env.DEPLOY_ENV = (env.BRANCH_NAME == 'master') ? 'PRO' : 'DEV'
+          env.COMPOSE_PROJECT = env.DEPLOY_ENV.toLowerCase()
+          echo "Desplegando en entorno: ${env.DEPLOY_ENV}"
+
+          try {
+            sh "IMAGE_NAME=${env.IMAGE_NAME} docker compose -p ${env.COMPOSE_PROJECT} up -d"
+            sh 'sleep 10'
+            sh "curl -fsS ${env.APP_URL}"
+          } finally {
+            sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
+          }
+        }
+      }
+      post {
+        always {
+          sh "docker rmi ${env.IMAGE_NAME} || true"
+        }
+        success {
+          echo 'CD SUCCESS'
+        }
+        failure {
+          echo 'CD FAILURE'
+          sh "docker compose -p ${env.COMPOSE_PROJECT} logs || true"
         }
       }
     }
