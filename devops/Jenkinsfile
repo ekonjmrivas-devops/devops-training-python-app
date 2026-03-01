@@ -76,10 +76,11 @@ pipeline {
             sh "docker ps -a"
             sh "docker logs my-flask-app-dc"
             sh """
-               APP_IP=\$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-flask-app-dc)
-               echo "App IP: \${APP_IP}"
-               curl -fsS http://\${APP_IP}:5000/
-            """            
+              docker run --rm \
+                --network ${env.COMPOSE_PROJECT}_scalian_training \
+                curlimages/curl:latest \
+                curl -fsS http://my-flask-app-dc:5000/
+            """
           } finally {
             sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
           }
