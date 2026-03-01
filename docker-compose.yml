@@ -21,7 +21,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "5001:5000"
+      #- "5001:5000" --> eliminamos para que asigne puerto dinámicamente
 
   
   db:
@@ -29,7 +29,7 @@ services:
     #container_name: my-flask-app-db  --> eliminamos para que Docker Compose genere los nombres y evitar colisión
     restart: always
     ports:
-      - "32000:5432"
+      #- "32000:5432" --> eliminamos para que asigne puerto dinámicamente
     environment:
       POSTGRES_PASSWORD: rootpwd
       POSTGRES_USER: root
