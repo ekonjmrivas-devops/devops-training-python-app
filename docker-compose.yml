@@ -18,7 +18,8 @@ services:
       DB_PORT: 5432
       DB_NAME: knights
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "5001:5000"
 
@@ -38,6 +39,11 @@ services:
       - dbdata:/var/lib/postgresql/data
     networks:
       scalian_training:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d knights"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 networks:
   scalian_training:
