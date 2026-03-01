@@ -79,7 +79,7 @@ pipeline {
               docker run --rm \
                 --network ${env.COMPOSE_PROJECT}_scalian_training \
                 curlimages/curl:latest \
-                curl -fsS http://my-flask-app-dc:5000/
+                curl -fsS http://app:5000/
             """
           } finally {
             sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
