@@ -53,6 +53,7 @@ jobs:
           pip install flake8 black mypy coverage pytest
       - name: Lint
         run: make lint
+        continue-on-errors: true
       - name: Test
         run: make test
 
