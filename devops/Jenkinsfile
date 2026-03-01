@@ -73,11 +73,13 @@ pipeline {
           try {
             sh "IMAGE_NAME=${env.IMAGE_NAME} docker compose -p ${env.COMPOSE_PROJECT} up -d"
             sh 'sleep 10'
+            sh "docker ps -a"
+            sh "docker logs my-flask-app-dc"
             sh """
-              APP_IP=\$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-flask-app-dc)
-              echo "App IP: \${APP_IP}"
-              curl -fsS http://\${APP_IP}:5000/
-            """
+               APP_IP=\$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-flask-app-dc)
+               echo "App IP: \${APP_IP}"
+               curl -fsS http://\${APP_IP}:5000/
+            """            
           } finally {
             sh "docker compose -p ${env.COMPOSE_PROJECT} down --volumes || true"
           }
