@@ -2,6 +2,7 @@
 #E1 - Estructura básica
 #E2 - Add stage CI Test
 #E4 - Add function runInDocker
+#E5 - Add CI Build image
 
 */
 
@@ -17,6 +18,10 @@ pipeline {
   options {
     timestamps()
     disableConcurrentBuilds()
+  }
+
+  environment {
+    IMAGE_NAME = "contrerasadr/devops-training-python-app:${env.BUILD_NUMBER}"
   }
 
   stages {
@@ -35,6 +40,14 @@ pipeline {
             sh 'pip install -r requirements.txt'
             sh 'pytest -q'
           }
+        }
+      }
+    }
+
+    stage('CI - Build image') {
+      steps {
+        script {
+          docker.build(env.IMAGE_NAME, '-f devops/Dockerfile .')
         }
       }
     }
