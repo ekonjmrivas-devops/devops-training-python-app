@@ -1,7 +1,9 @@
 /*
 #E1 - Estructura básica
+#E2 - Add stage CI Test
 
 */
+
 pipeline {
   agent any
 
@@ -16,6 +18,19 @@ pipeline {
         echo "Job: ${env.JOB_NAME}"
         echo "Build: ${env.BUILD_NUMBER}"
         echo "Branch: ${env.BRANCH_NAME}"
+      }
+    }
+
+    stage('CI - Test') {
+      agent {
+        docker {
+          image 'python:3.6-slim'
+          reuseNode true
+        }
+      }
+      steps {
+        sh 'pip install -r requirements.txt'
+        sh 'pytest -q'
       }
     }
   }
