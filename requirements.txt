@@ -1,6 +1,7 @@
 pytest
 coverage
 black[jupyter]
-
 Flask
 psycopg2-binary==2.8.6
+flake8
+mypy
